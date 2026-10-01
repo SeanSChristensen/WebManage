@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="webmanage.client/webmanage.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="WebManage.Server/WebManage.Server.csproj" />
+</Solution>
