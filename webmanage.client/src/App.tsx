@@ -4,9 +4,11 @@ import { TaskView } from './components/TaskView';
 import type { Task } from './types/Task';
 import './App.css';
 import { apiFetchTasks } from './service/api';
+import { sortTasksByName } from './types/Task'; 
 
 function App() {
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [sortOrder, setSortOrder] = useState("none");
 
        const setTasksFromAPI = async () => {
        const data = await apiFetchTasks();
@@ -17,6 +19,10 @@ function App() {
        setTasksFromAPI();
     }, []);
 
+    useEffect(() => {
+       setTasks(sortTasksByName(tasks))
+    }, [sortOrder]);
+
 
     return (
         <div>
@@ -24,6 +30,11 @@ function App() {
             <p>This component demonstrates fetching data from the server.</p>
             <TaskView tasks={tasks} />
             <button onClick={setTasksFromAPI}>Refresh</button>
+            <label for="taskName">Task Name:</label>
+            <select name="sortOrder" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+                <option value="none">None</option>
+                <option value="alphabetical">Alphabetical</option>
+            </select>
         </div>
     );
 }
