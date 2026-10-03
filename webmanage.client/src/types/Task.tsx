@@ -3,6 +3,7 @@ export type Task = {
       name: string;
       id: string;
       isWindowed: number;
+      cpuUsage: number;
 }
 
 export function sortTasksByName(tasks: Task[]): Task[] {

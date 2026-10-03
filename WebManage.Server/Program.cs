@@ -43,7 +43,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapGet("/getprocesses", () =>
 {
-    return WebManage.Server.Features.Task.GetRunningProcesses();
+ return WebManage.Server.Features.Task.GetRunningProcesses();
 });
 
 app.MapGet("/getwindowedprocesses", () =>

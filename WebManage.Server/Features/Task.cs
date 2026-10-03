@@ -3,49 +3,98 @@ using System.Security.Principal;
 
 namespace WebManage.Server.Features
 {
-    public class Task
+ public class Task
+ {
+  public static ComputerProcess[] GetRunningProcesses()
+  {
+   Process[] processes = Process.GetProcesses();
+   ComputerProcess[] computerProcesses = new ComputerProcess[processes.Length];
+   Dictionary<int, double> cpuUsage = new Dictionary<int, double>();
+   cpuUsage = getCpuUsageForProcessesAsync().Result;
+   for (int i = 0; i < processes.Length; i++)
+   {
+    bool isWindowed = processes[i].MainWindowHandle != 0;
+    computerProcesses[i] = new ComputerProcess
     {
-        public static ComputerProcess[] GetRunningProcesses()
-        {
-            Process[] processes = Process.GetProcesses();
-            ComputerProcess[] computerProcesses = new ComputerProcess[processes.Length];
-            for(int i = 0; i < processes.Length; i++)
-            {
-                bool isWindowed = processes[i].MainWindowHandle != 0;
-                computerProcesses[i] = new ComputerProcess
-                {
-                    Name = processes[i].ProcessName,
-                    Id = processes[i].Id.ToString(),
-                    IsWindowed = isWindowed
-                };
-            }
-            return computerProcesses;
-        }
+     Name = processes[i].ProcessName,
+     Id = processes[i].Id.ToString(),
+     IsWindowed = isWindowed,
+     CpuUsage = cpuUsage.ContainsKey(processes[i].Id) ? cpuUsage[processes[i].Id] : 0.0
+    };
+   }
+   return computerProcesses;
+  }
 
-        public static ComputerProcess[] getWindowedProcesses() {
-            var allProcesses = Task.GetRunningProcesses();
-            return allProcesses.Where(p => p.IsWindowed).ToArray();
-        }
+  public static ComputerProcess[] getWindowedProcesses()
+  {
+   var allProcesses = Task.GetRunningProcesses();
+   return allProcesses.Where(p => p.IsWindowed).ToArray();
+  }
 
-        public static bool endTaskById(int id)
-        {
-            try
-            {
-                Process process = Process.GetProcessById(id);
-                process.Kill();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error ending process with ID {id}: {ex.Message}");
-                return false;
-            }
-        }
+  public static bool endTaskById(int id)
+  {
+   try
+   {
+    Process process = Process.GetProcessById(id);
+    process.Kill();
+    return true;
+   }
+   catch (Exception ex)
+   {
+    Console.WriteLine($"Error ending process with ID {id}: {ex.Message}");
+    return false;
+   }
+  }
+
+  //code to get CPU usage for a specific process by its ID from https://www.vbforums.com/showthread.php?891264-RESOLVED-Get-CPU-usage-of-specific-process
+  public static async Task<Dictionary<int, double>> getCpuUsageForProcessesAsync()
+  {
+   Dictionary<int, TimeSpan> startCPU = new Dictionary<int, TimeSpan>();
+   Dictionary<int, TimeSpan> endCPU = new Dictionary<int, TimeSpan>();
+   Dictionary<int, double> cpuUsage = new Dictionary<int, double>();
+
+   var startTime = DateTime.UtcNow;
+   foreach (var process in Process.GetProcesses())
+   {
+    try { startCPU[process.Id] = process.TotalProcessorTime; } catch (Exception ex) { Console.WriteLine($"Error accessing process with ID {process.Id}: {ex.Message}"); }
+
+   }
+
+   await System.Threading.Tasks.Task.Delay(1000);
+
+   var endTime = DateTime.UtcNow;
+   foreach (var process in Process.GetProcesses())
+   {
+    try { endCPU[process.Id] = process.TotalProcessorTime; } catch (Exception ex) { Console.WriteLine($"Error accessing process with ID {process.Id}: {ex.Message}"); }
+   }
+
+   foreach (var process in Process.GetProcesses())
+   {
+    try
+    {
+     var cpuUsedMs = (endCPU[process.Id] - startCPU[process.Id]).TotalMilliseconds;
+     var totalMsPassed = (endTime - startTime).TotalMilliseconds;
+
+     double cpuUsageTotal = cpuUsedMs / totalMsPassed * 100;
+
+     cpuUsage[process.Id] = cpuUsageTotal;
     }
+    catch (Exception ex)
+    {
+     Console.WriteLine($"Error calculating CPU usage for process with ID {process.Id}: {ex.Message}");
+    }
+   }
+   return cpuUsage;
+  }
+ }
     public class ComputerProcess
     {
         public string Name { get; set; }
         public string Id { get; set; }
         public bool IsWindowed { get; set; }
-    }
+        
+        public double CpuUsage { get; set; } 
+
+
+ }
 }
