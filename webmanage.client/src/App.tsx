@@ -1,6 +1,5 @@
-﻿import { useEffect, useState } from 'react';
+﻿import { useEffect, useState, useCallback } from 'react';
 import { TaskView } from './components/TaskView';
-
 import type { Task } from './types/Task';
 import './App.css';
 import { apiFetchTasks } from './service/api';
@@ -10,24 +9,27 @@ function App() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [sortOrder, setSortOrder] = useState("none");
 
-       const setTasksFromAPI = async () => {
+       const setTasksFromAPI = useCallback(async () => {
             const data = await apiFetchTasks();
-            setTasks(data);
-       }
+            await setTasks(data);
+            if(sortOrder === "alphabetical"){ 
+              await setTasks(prev => sortTasksByName(prev));
+            }
+       },[sortOrder])
 
     useEffect(() => {
        setTasksFromAPI();
-
        const interval = setInterval(setTasksFromAPI, 5000);
        return () => clearInterval(interval);
-    }, []);
+    }, [setTasksFromAPI]);
 
+    
+    
     useEffect(() => {
-      if(sortOrder === "alphabetical") {
-        setTasks(sortTasksByName(tasks));
-      }
+        if(sortOrder === "alphabetical"){
+            setTasks(prev => sortTasksByName(prev));
+        }
     }, [sortOrder]);
-
 
     return (
         <div>
