@@ -11,16 +11,21 @@ function App() {
     const [sortOrder, setSortOrder] = useState("none");
 
        const setTasksFromAPI = async () => {
-       const data = await apiFetchTasks();
-       setTasks(data);
+            const data = await apiFetchTasks();
+            setTasks(data);
        }
 
     useEffect(() => {
        setTasksFromAPI();
+
+       const interval = setInterval(setTasksFromAPI, 5000);
+       return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
-       setTasks(sortTasksByName(tasks))
+      if(sortOrder === "alphabetical") {
+        setTasks(sortTasksByName(tasks));
+      }
     }, [sortOrder]);
 
 

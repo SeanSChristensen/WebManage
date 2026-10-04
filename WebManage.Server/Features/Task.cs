@@ -75,7 +75,7 @@ namespace WebManage.Server.Features
      var cpuUsedMs = (endCPU[process.Id] - startCPU[process.Id]).TotalMilliseconds;
      var totalMsPassed = (endTime - startTime).TotalMilliseconds;
 
-     double cpuUsageTotal = cpuUsedMs / totalMsPassed * 100;
+     double cpuUsageTotal = (cpuUsedMs / (totalMsPassed * Environment.ProcessorCount) ) * 100;
 
      cpuUsage[process.Id] = cpuUsageTotal;
     }
