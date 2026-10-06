@@ -3,7 +3,7 @@ import { TaskView } from './components/TaskView';
 import type { Task } from './types/Task';
 import './App.css';
 import { apiFetchTasks } from './service/api';
-import { sortTasksByName } from './types/Task'; 
+import { sortTasks } from './types/Task'; 
 
 function App() {
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -12,23 +12,19 @@ function App() {
        const setTasksFromAPI = useCallback(async () => {
             const data = await apiFetchTasks();
             await setTasks(data);
-            if(sortOrder === "alphabetical"){ 
-              await setTasks(prev => sortTasksByName(prev));
-            }
+            await setTasks(prev => sortTasks(prev, sortOrder));
        },[sortOrder])
 
     useEffect(() => {
        setTasksFromAPI();
-       const interval = setInterval(setTasksFromAPI, 5000);
+       const interval = setInterval(setTasksFromAPI, 10000);
        return () => clearInterval(interval);
     }, [setTasksFromAPI]);
 
     
     
     useEffect(() => {
-        if(sortOrder === "alphabetical"){
-            setTasks(prev => sortTasksByName(prev));
-        }
+        setTasks(prev => sortTasks(prev, sortOrder));
     }, [sortOrder]);
 
     return (
@@ -40,7 +36,9 @@ function App() {
             <label for="taskName">Task Name:</label>
             <select name="sortOrder" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
                 <option value="none">None</option>
-                <option value="alphabetical">Alphabetical</option>
+                <option value="name">Alphabetical</option>
+                <option value="cpu">CPU Usage</option>
+                <option value="ram">RAM Usage</option>  
             </select>
         </div>
     );
