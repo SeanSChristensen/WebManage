@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback } from 'react';
+﻿import { useEffect, useState, useCallback, useMemo } from 'react';
 import { TaskView } from './components/TaskView';
 import type { Task } from './types/Task';
 import './App.css';
@@ -9,10 +9,13 @@ function App() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [sortOrder, setSortOrder] = useState("none");
 
+    const sortedTasks = useMemo(() => {
+        return sortTasks(tasks, sortOrder);
+    }, [tasks, sortOrder]);
+
        const setTasksFromAPI = useCallback(async () => {
             const data = await apiFetchTasks();
             await setTasks(data);
-            await setTasks(prev => sortTasks(prev, sortOrder));
        },[sortOrder])
 
     useEffect(() => {
@@ -21,17 +24,11 @@ function App() {
        return () => clearInterval(interval);
     }, [setTasksFromAPI]);
 
-    
-    
-    useEffect(() => {
-        setTasks(prev => sortTasks(prev, sortOrder));
-    }, [sortOrder]);
-
     return (
         <div>
             <h1 id="tableLabel">Tasks</h1>
             <p>This component demonstrates fetching data from the server.</p>
-            <TaskView tasks={tasks} />
+            <TaskView tasks={sortedTasks} />
             <button onClick={setTasksFromAPI}>Refresh</button>
             <label for="taskName">Task Name:</label>
             <select name="sortOrder" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
