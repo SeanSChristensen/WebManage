@@ -1,21 +1,27 @@
 import type { Task } from "../types/Task";
 import {apiFetcher} from "../service/api";
 
-type Props = {
-      tasks: Task[];
+interface TaskProps {
+  setSortingHook: (value: string) => void;
+  tasks: Task[];
+}
+
+
+export const TaskView : React.FC<TaskProps> = ({ tasks, setSortingHook }) => {
+
+const handleHeaderClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  setSortingHook(event.currentTarget.id)
 };
 
-
-export const TaskView : React.FC<Props> = ({ tasks }) => {
     return (
         <div className="dark-mode-container">
             <table className="dark-mode-table">
                 <thead>
                     <tr>
-                      <th scope="col">Name</th>
+                      <th scope="col" id="name" onClick={handleHeaderClick}>Name</th>
                       <th scope="col">ID</th>
-                      <th scope="col">CPU Usage</th>
-                      <th scope="col">RAM Usage</th>
+                      <th scope="col" id="cpu" onClick={handleHeaderClick}>CPU Usage</th>
+                      <th scope="col" id="ram" onClick={handleHeaderClick}>RAM Usage</th>
                       <th scope="col">Actions</th>
                     </tr>
                 </thead>

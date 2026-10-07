@@ -28,15 +28,7 @@ function App() {
         <div>
             <h1 id="tableLabel">Tasks</h1>
             <p>This component demonstrates fetching data from the server.</p>
-            <TaskView tasks={sortedTasks} />
-            <button onClick={setTasksFromAPI}>Refresh</button>
-            <label for="taskName">Task Name:</label>
-            <select name="sortOrder" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-                <option value="none">None</option>
-                <option value="name">Alphabetical</option>
-                <option value="cpu">CPU Usage</option>
-                <option value="ram">RAM Usage</option>  
-            </select>
+            <TaskView tasks={sortedTasks} setSortingHook={setSortOrder} />
         </div>
     );
 }
