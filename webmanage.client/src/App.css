@@ -65,3 +65,7 @@ th, td {
   color: #e57373; /* Red */
   font-weight: bold;
  }
+
+.clickableHeader {
+    cursor: pointer;
+}

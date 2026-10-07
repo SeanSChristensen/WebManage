@@ -18,10 +18,10 @@ const handleHeaderClick = (event: React.MouseEvent<HTMLButtonElement>) => {
             <table className="dark-mode-table">
                 <thead>
                     <tr>
-                      <th scope="col" id="name" onClick={handleHeaderClick}>Name</th>
+                      <th scope="col" id="name" className="clickableHeader" onClick={handleHeaderClick}>Name</th>
                       <th scope="col">ID</th>
-                      <th scope="col" id="cpu" onClick={handleHeaderClick}>CPU Usage</th>
-                      <th scope="col" id="ram" onClick={handleHeaderClick}>RAM Usage</th>
+                      <th scope="col" id="cpu" className="clickableHeader" onClick={handleHeaderClick}>CPU Usage</th>
+                      <th scope="col" id="ram" className="clickableHeader" onClick={handleHeaderClick}>RAM Usage</th>
                       <th scope="col">Actions</th>
                     </tr>
                 </thead>
