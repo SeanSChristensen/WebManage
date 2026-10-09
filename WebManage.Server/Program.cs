@@ -1,4 +1,8 @@
+using NAudio;
+using NAudio.CoreAudioApi;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using WebManage.Server.Features;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +60,22 @@ app.MapGet("/end/{id}", (int id) =>
     Process processes = Process.GetProcessById(id);
     processes.Kill();
     return "done";
+});
+
+app.MapGet("/sounds/{programID}/{volume}", (int programID, int volume) =>
+{
+    MMDeviceEnumerator MMDE = new MMDeviceEnumerator();
+    var a = MMDE.GetDefaultAudioEndpoint(DataFlow.Render, (Role)DeviceState.Active);
+    var sessions = a.AudioSessionManager.Sessions;
+
+    for (int i = 0; i < sessions.Count; i++)
+    {
+        if (sessions[i].GetProcessID == programID)
+        {
+            Single value = (float)(volume * 0.01);
+            sessions[i].SimpleAudioVolume.Volume = value;
+        }
+    }
 });
 
 
