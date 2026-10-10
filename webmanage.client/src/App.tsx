@@ -1,13 +1,16 @@
 ﻿import { useEffect, useState, useCallback, useMemo } from 'react';
 import { TaskView } from './components/TaskView';
+import { VolumeView } from './components/VolumeView';
 import type { Task } from './types/Task';
+import type { Volume } from './types/Volume';
 import './App.css';
-import { apiFetchTasks } from './service/api';
+import { apiFetchTasks,apiFetchVolumes } from './service/api';
 import { sortTasks } from './types/Task'; 
 
 function App() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [sortOrder, setSortOrder] = useState("none");
+    const [volumes, setVolumes] = useState<Volume[]>([]);
 
     const sortedTasks = useMemo(() => {
         return sortTasks(tasks, sortOrder);
@@ -24,11 +27,21 @@ function App() {
        return () => clearInterval(interval);
     }, [setTasksFromAPI]);
 
+    useEffect(() => {
+      async function fetchingVolumes(){
+      const data = await apiFetchVolumes();
+      await setVolumes(data);
+      }
+
+      fetchingVolumes();
+    }, []);
+
     return (
         <div>
             <h1 id="tableLabel">Tasks</h1>
             <p>This component demonstrates fetching data from the server.</p>
             <TaskView tasks={sortedTasks} setSortingHook={setSortOrder} />
+            <VolumeView volumes={volumes} />
         </div>
     );
 }

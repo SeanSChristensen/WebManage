@@ -62,6 +62,7 @@ app.MapGet("/end/{id}", (int id) =>
     return "done";
 });
 
+//Made with assistance from https://github.com/naudio/NAudio/issues/665
 app.MapGet("/sounds/{programID}/{volume}", (int programID, int volume) =>
 {
     MMDeviceEnumerator MMDE = new MMDeviceEnumerator();
@@ -76,6 +77,22 @@ app.MapGet("/sounds/{programID}/{volume}", (int programID, int volume) =>
             sessions[i].SimpleAudioVolume.Volume = value;
         }
     }
+});
+
+app.MapGet("/sounds", () =>
+{
+    MMDeviceEnumerator MMDE = new MMDeviceEnumerator();
+    var a = MMDE.GetDefaultAudioEndpoint(DataFlow.Render, (Role)DeviceState.Active);
+    var sessions = a.AudioSessionManager.Sessions;
+    Volume[] volumeSessionNames = new Volume[sessions.Count];
+
+    for (int i = 0; i < sessions.Count; i++)
+    {
+        var process = Process.GetProcessById((int)sessions[i].GetProcessID);
+        volumeSessionNames[i] = new Volume(process.Id, process.ProcessName);
+    }
+
+    return volumeSessionNames;
 });
 
 
