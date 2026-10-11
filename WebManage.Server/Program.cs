@@ -1,9 +1,7 @@
-using NAudio;
 using NAudio.CoreAudioApi;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using WebManage.Server.Features;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +91,18 @@ app.MapGet("/sounds", () =>
     }
 
     return volumeSessionNames;
+});
+
+//Made with help from https://stackoverflow.com/questions/51193103/how-to-get-total-cpu-usage-all-processes-c
+app.MapGet("/cpu", async () =>
+{
+var performance = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+    var first = performance.NextValue();
+
+    await System.Threading.Tasks.Task.Delay(1000);
+
+    return performance.NextValue();
 });
 
 
