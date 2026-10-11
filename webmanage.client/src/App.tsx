@@ -12,6 +12,7 @@ function App() {
     const [sortOrder, setSortOrder] = useState("none");
     const [volumes, setVolumes] = useState<Volume[]>([]);
     const [totalCpuUsage,setTotalCpuUsage] = useState(0);
+    const [totalRamUsage,setTotalRamUsage] = useState(0);
 
     const sortedTasks = useMemo(() => {
         return sortTasks(tasks, sortOrder);
@@ -37,7 +38,17 @@ function App() {
       fetchingVolumes();
     }, []);
 
+     const setRamFromApi = async () => {
+       const response = await fetch('http://localhost:5222/ram');
+       const data = await response.json();
+       setTotalRamUsage(data);
+     }
 
+    useEffect(() => {
+       setRamFromApi();
+       const interval = setInterval(setRamFromApi, 10000);
+       return () => clearInterval(interval);
+    }, []);
 
      const setCpuFromApi = async () => {
        const response = await fetch('http://localhost:5222/cpu');
@@ -53,12 +64,12 @@ function App() {
 
 
 
-
-
     return (
         <div>
             <h1 id="tableLabel">Total CPU usage</h1>
-            <p>{totalCpuUsage}</p>
+            <p>{Math.trunc(totalCpuUsage)}%</p>
+            <h1 id="tableLabel">Total RAM usage</h1>
+            <p>{Math.trunc(totalRamUsage)}%</p>
             <h1 id="tableLabel">Tasks</h1>
             <p>This component demonstrates fetching data from the server.</p>
             <TaskView tasks={sortedTasks} setSortingHook={setSortOrder} />

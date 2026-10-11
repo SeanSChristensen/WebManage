@@ -23,4 +23,10 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic">
+      <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.VisualBasic.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

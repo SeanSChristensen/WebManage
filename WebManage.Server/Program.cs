@@ -2,6 +2,7 @@ using NAudio.CoreAudioApi;
 using System.Diagnostics;
 using WebManage.Server.Features;
 using System.Threading;
+using Microsoft.VisualBasic.Devices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,13 @@ var performance = new PerformanceCounter("Processor", "% Processor Time", "_Tota
     await System.Threading.Tasks.Task.Delay(1000);
 
     return performance.NextValue();
+});
+
+app.MapGet("/ram", async () =>
+{
+    ComputerInfo test = new ComputerInfo();
+    double percentageUsed = (double)(test.TotalPhysicalMemory - test.AvailablePhysicalMemory) / test.TotalPhysicalMemory * 100;
+    return percentageUsed;
 });
 
 
