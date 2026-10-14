@@ -1,8 +1,12 @@
+using Microsoft.VisualBasic.Devices;
 using NAudio.CoreAudioApi;
 using System.Diagnostics;
-using WebManage.Server.Features;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
-using Microsoft.VisualBasic.Devices;
+using System.Xml.Linq;
+using WebManage.Server.Features;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +34,7 @@ var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
+
 
 app.MapGet("/weatherforecast", () =>
 {
@@ -94,6 +99,17 @@ app.MapGet("/sounds", () =>
     return volumeSessionNames;
 });
 
+app.MapGet("/driveInfo", () =>
+{
+    DriveInfo[] drives = DriveInfo.GetDrives();
+    storageDrive[] storageDrives = new storageDrive[drives.Count()];
+    for(int i = 0; i < drives.Count(); i++)
+    {
+        storageDrives[i] = new storageDrive(drives[i].Name, (int)(drives[i].TotalSize / (1024 * 1024 * 1024)), (int)(drives[i].AvailableFreeSpace / (1024 * 1024 * 1024)));
+    }
+    return storageDrives;
+});
+
 //Made with help from https://stackoverflow.com/questions/51193103/how-to-get-total-cpu-usage-all-processes-c
 app.MapGet("/cpu", async () =>
 {
@@ -112,6 +128,7 @@ app.MapGet("/ram", async () =>
     double percentageUsed = (double)(test.TotalPhysicalMemory - test.AvailablePhysicalMemory) / test.TotalPhysicalMemory * 100;
     return percentageUsed;
 });
+
 
 
 app.MapFallbackToFile("/index.html");
