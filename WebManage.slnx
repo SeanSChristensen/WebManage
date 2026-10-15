@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="C:/Users/redro/Downloads/app screenshot.png" />
+  </Folder>
   <Project Path="webmanage.client/webmanage.client.esproj">
     <Build />
     <Deploy />
