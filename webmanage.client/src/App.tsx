@@ -73,6 +73,7 @@ function App() {
             <h1 id="tableLabel">Tasks</h1>
             <p>This component demonstrates fetching data from the server.</p>
             <TaskView tasks={sortedTasks} setSortingHook={setSortOrder} />
+            <h1>Volume Mixer</h1>
             <VolumeView volumes={volumes} />
         </div>
     );
